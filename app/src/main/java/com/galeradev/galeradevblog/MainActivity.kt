@@ -1,6 +1,5 @@
 package com.galeradev.galeradevblog
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import com.google.android.material.snackbar.Snackbar
@@ -23,7 +22,6 @@ import java.net.URL
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -42,7 +40,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         nav_view.setNavigationItemSelectedListener(this)
 
 
-        val requestObservable = Observable.create<String> {
+        val getPosts = Observable.create<String> {
             val connection = URL("https://blog.mstefan99.com/api/v0.1/posts").openConnection() as HttpURLConnection
             try {
                 connection.connect()
@@ -57,7 +55,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
 
-        requestObservable.subscribe({
+        val getPostsObserver = getPosts.subscribe({
             responseData.text = it
         }, {
             Log.e("Connection error", it.message)
