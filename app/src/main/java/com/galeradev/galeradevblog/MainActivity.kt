@@ -1,6 +1,8 @@
 package com.galeradev.galeradevblog
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
 import androidx.core.view.GravityCompat
@@ -10,9 +12,18 @@ import android.view.Menu
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.content_main.*
+import java.lang.RuntimeException
+import java.net.HttpURLConnection
+import java.net.HttpURLConnection.HTTP_OK
+import java.net.URL
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
+    @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -29,6 +40,29 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
+
+
+        val requestObservable = Observable.create<String> {
+            val connection = URL("https://blog.mstefan99.com/api/v0.1/posts").openConnection() as HttpURLConnection
+            try {
+                connection.connect()
+                if (connection.responseCode != HTTP_OK) {
+                    it.onError(RuntimeException(connection.responseMessage))
+                } else {
+                    val response = connection.inputStream.bufferedReader().readText()
+                    it.onNext(response)
+                }
+            } finally {
+                connection.disconnect()
+            }
+        }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+
+        requestObservable.subscribe({
+            responseData.text = it
+        }, {
+            Log.e("Connection error", it.message)
+        })
+
     }
 
     override fun onBackPressed() {
