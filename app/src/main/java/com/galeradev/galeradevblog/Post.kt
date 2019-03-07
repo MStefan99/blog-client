@@ -4,7 +4,7 @@ class Post(
     var id: Int,
     var title: String,
     var tagline: String,
-    var themeColor: String,
+    var theme_color: String,
     var link: String,
     var author: String,
     var content: String,

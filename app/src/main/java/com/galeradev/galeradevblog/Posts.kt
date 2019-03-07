@@ -1,13 +1,14 @@
 package com.galeradev.galeradevblog
 
 object Posts {
-    val posts: ArrayList<Post>? = null
+    val posts = arrayListOf<Post>()
 
     fun add(post: Post) {
-        posts?.add(post)
+        posts.add(post)
     }
 
-    fun get():ArrayList<Post>?{
-        return posts
+    fun addFromList(list: ArrayList<Post>) {
+        for (post: Post in list)
+            add(post)
     }
 }

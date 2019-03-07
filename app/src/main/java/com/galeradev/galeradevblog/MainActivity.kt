@@ -17,8 +17,9 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.content_main.*
 import java.lang.RuntimeException
 import java.net.HttpURLConnection
-import java.net.HttpURLConnection.HTTP_OK
 import java.net.URL
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -29,11 +30,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
+                .setAction("Action", null).show()
         }
 
         val toggle = ActionBarDrawerToggle(
-                this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+            this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close
+        )
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
@@ -44,7 +46,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             val connection = URL("https://blog.mstefan99.com/api/v0.1/posts").openConnection() as HttpURLConnection
             try {
                 connection.connect()
-                if (connection.responseCode != HTTP_OK) {
+                if (connection.responseCode != HttpURLConnection.HTTP_OK) {
                     it.onError(RuntimeException(connection.responseMessage))
                 } else {
                     val response = connection.inputStream.bufferedReader().readText()
@@ -56,11 +58,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
 
         val getPostsObserver = getPosts.subscribe({
-            responseData.text = it
-        }, {
-            Log.e("Connection error", it.message)
-        })
+            val listType = object : TypeToken<ArrayList<Post>>() {}.type
+            val data: ArrayList<Post> = Gson().fromJson(it, listType)
+            Log.d("Parsed json:", data.toString())
+            Posts.addFromList(data)
 
+            val postsAdapter = PostsAdapter(this, R.layout.posts_adapter, Posts.posts)
+            postsList.adapter = postsAdapter
+
+        }, {
+            Snackbar.make(fab, "No internet connection", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show()
+        })
     }
 
     override fun onBackPressed() {
