@@ -41,23 +41,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         nav_view.setNavigationItemSelectedListener(this)
 
+        val postsLoadObservable =
+            PostsObservable.getPosts("blog.").subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
 
-        val getPosts = Observable.create<String> {
-            val connection = URL("https://blog.mstefan99.com/api/v0.1/posts").openConnection() as HttpURLConnection
-            try {
-                connection.connect()
-                if (connection.responseCode != HttpURLConnection.HTTP_OK) {
-                    it.onError(RuntimeException(connection.responseMessage))
-                } else {
-                    val response = connection.inputStream.bufferedReader().readText()
-                    it.onNext(response)
-                }
-            } finally {
-                connection.disconnect()
-            }
-        }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-
-        val getPostsObserver = getPosts.subscribe({
+        val postsLoadObserver = postsLoadObservable.subscribe({
             val listType = object : TypeToken<ArrayList<Post>>() {}.type
             val data: ArrayList<Post> = Gson().fromJson(it, listType)
             Log.d("Parsed json:", data.toString())

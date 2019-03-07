@@ -21,7 +21,7 @@ class PostsAdapter(private val aContext: Context, private val aResource: Int, ob
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val title = getItem(position)!!.title
         val tagline = getItem(position)!!.tagline
-        val splash = getItem(position)!!.image
+        val splash = getItem(position)!!.splash
         val holder: ViewHolder
         val view: View
 
@@ -30,7 +30,7 @@ class PostsAdapter(private val aContext: Context, private val aResource: Int, ob
             holder = ViewHolder(
                 view.findViewById(R.id.postTitle),
                 view.findViewById(R.id.postTagline),
-                view.findViewById(R.id.postImage)
+                view.findViewById(R.id.postSplash)
             )
             view.tag = holder
 

@@ -1,5 +1,7 @@
 package com.galeradev.galeradevblog
 
+import android.graphics.Bitmap
+
 class Post(
     var id: Int,
     var title: String,
@@ -10,8 +12,10 @@ class Post(
     var content: String,
     var date: String
 ) {
-    var image: String = "Null"
-    var splash: String = "Null"
+    var image: String? = null
+    var splash: String? = null
+    var imageBitmap: Bitmap? = null
+    var splashBitmap: Bitmap? = null
     lateinit var tags: String
 
 
