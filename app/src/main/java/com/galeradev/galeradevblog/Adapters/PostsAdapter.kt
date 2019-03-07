@@ -1,4 +1,4 @@
-package com.galeradev.galeradevblog
+package com.galeradev.galeradevblog.Adapters
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -7,21 +7,22 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import com.galeradev.galeradevblog.Storage.Post
+import com.galeradev.galeradevblog.R
 
-class PostsAdapter(private val aContext: Context, private val aResource: Int, objects: List<Post>) :
+class PostsAdapter(private val aContext: Context, private val aResource: Int, objects: ArrayList<Post>) :
     ArrayAdapter<Post>(aContext, aResource, objects) {
 
     private data class ViewHolder(
         val title: TextView,
         val tagline: TextView,
-        val splash: ImageView
+        val splashBitmap: ImageView
     )
-
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val title = getItem(position)!!.title
         val tagline = getItem(position)!!.tagline
-        val splash = getItem(position)!!.splash
+        val splashBitmap = getItem(position)!!.splashBitmap
         val holder: ViewHolder
         val view: View
 
@@ -42,7 +43,7 @@ class PostsAdapter(private val aContext: Context, private val aResource: Int, ob
 
         holder.title.text = title
         holder.tagline.text = tagline
-        //TODO: Display image
+        holder.splashBitmap.setImageBitmap(splashBitmap)
 
         return view
     }

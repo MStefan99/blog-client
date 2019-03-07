@@ -1,4 +1,4 @@
-package com.galeradev.galeradevblog
+package com.galeradev.galeradevblog.Activities
 
 import android.os.Bundle
 import android.util.Log
@@ -9,17 +9,20 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import com.galeradev.galeradevblog.*
+import com.galeradev.galeradevblog.Adapters.PostsAdapter
+import com.galeradev.galeradevblog.Loaders.PostsLoader
+import com.galeradev.galeradevblog.Storage.Post
+import com.galeradev.galeradevblog.Storage.Posts
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.content_main.*
-import java.lang.RuntimeException
-import java.net.HttpURLConnection
-import java.net.URL
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+
+const val TAG = "MainActivity"
+const val API_VERSION = "v0.1"
+const val URL = "https://blog.mstefan99.com/api/$API_VERSION"
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -34,7 +37,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
         val toggle = ActionBarDrawerToggle(
-            this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close
+            this, drawer_layout, toolbar,
+            R.string.navigation_drawer_open,
+            R.string.navigation_drawer_close
         )
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
@@ -42,8 +47,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         nav_view.setNavigationItemSelectedListener(this)
 
         val postsLoadObservable =
-            PostsObservable.getPosts("blog.").subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+            PostsLoader.getPostsLoaderObservable("$URL/posts/")
 
         val postsLoadObserver = postsLoadObservable.subscribe({
             val listType = object : TypeToken<ArrayList<Post>>() {}.type
@@ -51,10 +55,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             Log.d("Parsed json:", data.toString())
             Posts.addFromList(data)
 
-            val postsAdapter = PostsAdapter(this, R.layout.posts_adapter, Posts.posts)
+            val postsAdapter = PostsAdapter(
+                this,
+                R.layout.posts_adapter,
+                Posts.posts
+            )
             postsList.adapter = postsAdapter
 
         }, {
+            Log.e(TAG, "Network error: $it")
             Snackbar.make(fab, "No internet connection", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
         })
