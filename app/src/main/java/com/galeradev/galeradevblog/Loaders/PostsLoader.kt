@@ -1,4 +1,4 @@
-package com.galeradev.galeradevblog.Loaders
+package com.galeradev.galeradevblog.loaders
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory

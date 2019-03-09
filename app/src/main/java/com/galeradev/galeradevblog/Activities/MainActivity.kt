@@ -1,8 +1,6 @@
-package com.galeradev.galeradevblog.Activities
+package com.galeradev.galeradevblog.activities
 
 import android.os.Bundle
-import android.util.Log
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
 import androidx.core.view.GravityCompat
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -10,19 +8,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import com.galeradev.galeradevblog.*
-import com.galeradev.galeradevblog.Adapters.PostsAdapter
-import com.galeradev.galeradevblog.Loaders.PostsLoader
-import com.galeradev.galeradevblog.Storage.Post
-import com.galeradev.galeradevblog.Storage.Posts
+import com.galeradev.galeradevblog.fragments.PostsFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
-import kotlinx.android.synthetic.main.content_main.*
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-
-const val TAG = "MainActivity"
-const val API_VERSION = "v0.1"
-const val URL = "https://blog.mstefan99.com/api/$API_VERSION"
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -30,11 +18,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
-
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        }
 
         val toggle = ActionBarDrawerToggle(
             this, drawer_layout, toolbar,
@@ -46,27 +29,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         nav_view.setNavigationItemSelectedListener(this)
 
-        val postsLoadObservable =
-            PostsLoader.getPostsLoaderObservable("$URL/posts/")
 
-        val postsLoadObserver = postsLoadObservable.subscribe({
-            val listType = object : TypeToken<ArrayList<Post>>() {}.type
-            val data: ArrayList<Post> = Gson().fromJson(it, listType)
-            Log.d("Parsed json:", data.toString())
-            Posts.addFromList(data)
-
-            val postsAdapter = PostsAdapter(
-                this,
-                R.layout.posts_adapter,
-                Posts.posts
-            )
-            postsList.adapter = postsAdapter
-
-        }, {
-            Log.e(TAG, "Network error: $it")
-            Snackbar.make(fab, "No internet connection", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        })
     }
 
     override fun onBackPressed() {
@@ -98,6 +61,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         when (item.itemId) {
             R.id.nav_camera -> {
                 // Handle the camera action
+                supportFragmentManager.beginTransaction().replace(R.id.main_fragment_container, PostsFragment()).commit()
             }
             R.id.nav_gallery -> {
 

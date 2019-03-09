@@ -1,4 +1,4 @@
-package com.galeradev.galeradevblog.Adapters
+package com.galeradev.galeradevblog.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
