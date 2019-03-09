@@ -1,6 +1,5 @@
-package com.galeradev.galeradevblog
+package com.galeradev.galeradevblog.Activities
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import com.google.android.material.snackbar.Snackbar
@@ -10,20 +9,23 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import com.galeradev.galeradevblog.*
+import com.galeradev.galeradevblog.Adapters.PostsAdapter
+import com.galeradev.galeradevblog.Loaders.PostsLoader
+import com.galeradev.galeradevblog.Storage.Post
+import com.galeradev.galeradevblog.Storage.Posts
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.content_main.*
-import java.lang.RuntimeException
-import java.net.HttpURLConnection
-import java.net.HttpURLConnection.HTTP_OK
-import java.net.URL
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+
+const val TAG = "MainActivity"
+const val API_VERSION = "v0.1"
+const val URL = "https://blog.mstefan99.com/api/$API_VERSION"
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -31,38 +33,40 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
+                .setAction("Action", null).show()
         }
 
         val toggle = ActionBarDrawerToggle(
-                this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+            this, drawer_layout, toolbar,
+            R.string.navigation_drawer_open,
+            R.string.navigation_drawer_close
+        )
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
 
+        val postsLoadObservable =
+            PostsLoader.getPostsLoaderObservable("$URL/posts/")
 
-        val requestObservable = Observable.create<String> {
-            val connection = URL("https://blog.mstefan99.com/api/v0.1/posts").openConnection() as HttpURLConnection
-            try {
-                connection.connect()
-                if (connection.responseCode != HTTP_OK) {
-                    it.onError(RuntimeException(connection.responseMessage))
-                } else {
-                    val response = connection.inputStream.bufferedReader().readText()
-                    it.onNext(response)
-                }
-            } finally {
-                connection.disconnect()
-            }
-        }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+        val postsLoadObserver = postsLoadObservable.subscribe({
+            val listType = object : TypeToken<ArrayList<Post>>() {}.type
+            val data: ArrayList<Post> = Gson().fromJson(it, listType)
+            Log.d("Parsed json:", data.toString())
+            Posts.addFromList(data)
 
-        requestObservable.subscribe({
-            responseData.text = it
+            val postsAdapter = PostsAdapter(
+                this,
+                R.layout.posts_adapter,
+                Posts.posts
+            )
+            postsList.adapter = postsAdapter
+
         }, {
-            Log.e("Connection error", it.message)
+            Log.e(TAG, "Network error: $it")
+            Snackbar.make(fab, "No internet connection", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show()
         })
-
     }
 
     override fun onBackPressed() {
