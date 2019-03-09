@@ -18,12 +18,13 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.fragment_posts.*
 
+
 private const val TAG = "PostsFragment"
 private const val API_VERSION = "v0.1"
-private const val ROUTE = "posts"
+private const val ROUTE = "favourites"
 private const val API_URL = "https://blog.mstefan99.com/api/$API_VERSION/$ROUTE/"
 
-class PostsFragment : Fragment() {
+class FavouritesFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)

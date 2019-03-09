@@ -8,14 +8,19 @@ import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import com.galeradev.galeradevblog.*
+import com.galeradev.galeradevblog.fragments.FavouritesFragment
 import com.galeradev.galeradevblog.fragments.PostsFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import java.net.CookieHandler
+import java.net.CookieManager
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val manager = CookieManager()
+        CookieHandler.setDefault(manager)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
@@ -28,8 +33,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
-
-
     }
 
     override fun onBackPressed() {
@@ -60,11 +63,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Handle navigation view item clicks here.
         when (item.itemId) {
             R.id.nav_camera -> {
-                // Handle the camera action
-                supportFragmentManager.beginTransaction().replace(R.id.main_fragment_container, PostsFragment()).commit()
+                supportFragmentManager.beginTransaction().replace(R.id.main_fragment_container, PostsFragment())
+                    .commit()
             }
             R.id.nav_gallery -> {
-
+                supportFragmentManager.beginTransaction().replace(R.id.main_fragment_container, FavouritesFragment())
+                    .commit()
             }
             R.id.nav_slideshow -> {
 
