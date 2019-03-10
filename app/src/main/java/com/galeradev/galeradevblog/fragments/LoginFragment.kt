@@ -31,24 +31,28 @@ class LoginFragment : Fragment() {
             val queue = Volley.newRequestQueue(activity)
 
             val loginRequest = object : StringRequest(
-                Method.POST,
-                API_URL,
-                {
+                Method.POST, API_URL, {
                     Toast.makeText(
                         activity,
                         it,
                         Toast.LENGTH_LONG
                     ).show()
-                },
-                {
-                    Toast.makeText(
-                        activity,
-                        "Network error ${it.networkResponse.statusCode}",
-                        Toast.LENGTH_LONG
-                    ).show()
+                }, {
+                    if (it.networkResponse.data != null) {
+                        Toast.makeText(
+                            activity,
+                            "Network error ${it.networkResponse.statusCode} ${kotlin.text.String(it.networkResponse.data)}",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    } else {
+                        Toast.makeText(
+                            activity,
+                            "Network error ${it.networkResponse.statusCode}",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
                 }
             ) {
-                @Throws(com.android.volley.AuthFailureError::class)
                 override fun getParams(): Map<String, String> {
                     val params = HashMap<String, String>()
                     params["login"] = login_field.text.toString()
@@ -57,7 +61,6 @@ class LoginFragment : Fragment() {
                 }
             }
             queue.add(loginRequest)
-
         }
     }
 }

@@ -8,7 +8,7 @@ import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import com.galeradev.galeradevblog.R
-import com.galeradev.galeradevblog.Storage.Post
+import com.galeradev.galeradevblog.storage.Post
 
 class PostsAdapter(private val aContext: Context, private val aResource: Int, objects: ArrayList<Post>) :
     ArrayAdapter<Post>(aContext, aResource, objects) {

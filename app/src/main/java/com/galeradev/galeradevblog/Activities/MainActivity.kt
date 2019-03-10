@@ -7,6 +7,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import com.galeradev.galeradevblog.R
+import com.galeradev.galeradevblog.fragments.AccountFragment
 import com.galeradev.galeradevblog.fragments.FavouritesFragment
 import com.galeradev.galeradevblog.fragments.LoginFragment
 import com.galeradev.galeradevblog.fragments.PostsFragment
@@ -34,6 +35,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         )
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
+
+        supportFragmentManager.beginTransaction().replace(R.id.main_fragment_container, PostsFragment())
+            .commit()
+        nav_view.setCheckedItem(R.id.nav_posts)
+
 
         nav_view.setNavigationItemSelectedListener(this)
     }
@@ -65,20 +71,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         when (item.itemId) {
-            R.id.nav_camera -> {
+            R.id.nav_posts -> {
                 supportFragmentManager.beginTransaction().replace(R.id.main_fragment_container, PostsFragment())
                     .commit()
             }
-            R.id.nav_gallery -> {
+            R.id.nav_favourites -> {
                 supportFragmentManager.beginTransaction().replace(R.id.main_fragment_container, FavouritesFragment())
                     .commit()
             }
-            R.id.nav_slideshow -> {
-                supportFragmentManager.beginTransaction().replace(R.id.main_fragment_container, LoginFragment())
+            R.id.nav_account -> {
+                supportFragmentManager.beginTransaction().replace(R.id.main_fragment_container, AccountFragment())
                     .commit()
             }
-            R.id.nav_manage -> {
-
+            R.id.nav_login -> {
+                supportFragmentManager.beginTransaction().replace(R.id.main_fragment_container, LoginFragment())
+                    .commit()
             }
             R.id.nav_share -> {
 
