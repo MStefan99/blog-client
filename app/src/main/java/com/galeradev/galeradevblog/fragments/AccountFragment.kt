@@ -2,6 +2,7 @@ package com.galeradev.galeradevblog.fragments
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +17,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.fragment_account.*
 
-private const val TAG = "FavouritesFragment"
+private const val TAG = "AccountFragment"
 private const val API_VERSION = "v0.1"
 private const val ROUTE = "account"
 private const val API_URL = "https://blog.mstefan99.com/api/$API_VERSION/$ROUTE/"
@@ -34,10 +35,10 @@ class AccountFragment : Fragment() {
                 tv_username.text = "Hi, ${user.username}!"
                 if (user.verified) {
                     tv_email.setTextColor(Color.parseColor("#2bf27f"))
-                    tv_email.text = "Your email, ${user.email}, is verified!"
+                    tv_email.text = "Your email (${user.email}) is verified!"
                 } else {
                     tv_email.setTextColor(Color.parseColor("#f22746"))
-                    tv_email.text = "Your email, ${user.email}, is not verified!"
+                    tv_email.text = "Your email (${user.email}) is not verified!"
                 }
 
             }, {
