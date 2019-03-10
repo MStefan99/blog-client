@@ -1,4 +1,4 @@
-package com.galeradev.galeradevblog.Storage
+package com.galeradev.galeradevblog.storage
 
 import android.graphics.Bitmap
 

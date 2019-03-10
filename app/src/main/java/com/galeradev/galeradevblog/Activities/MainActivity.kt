@@ -1,40 +1,32 @@
-package com.galeradev.galeradevblog.Activities
+package com.galeradev.galeradevblog.activities
 
 import android.os.Bundle
-import android.util.Log
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.navigation.NavigationView
-import androidx.core.view.GravityCompat
-import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import com.galeradev.galeradevblog.*
-import com.galeradev.galeradevblog.Adapters.PostsAdapter
-import com.galeradev.galeradevblog.Loaders.PostsLoader
-import com.galeradev.galeradevblog.Storage.Post
-import com.galeradev.galeradevblog.Storage.Posts
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
+import com.galeradev.galeradevblog.R
+import com.galeradev.galeradevblog.fragments.AccountFragment
+import com.galeradev.galeradevblog.fragments.FavouritesFragment
+import com.galeradev.galeradevblog.fragments.LoginFragment
+import com.galeradev.galeradevblog.fragments.PostsFragment
+import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
-import kotlinx.android.synthetic.main.content_main.*
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-
-const val TAG = "MainActivity"
-const val API_VERSION = "v0.1"
-const val URL = "https://blog.mstefan99.com/api/$API_VERSION"
+import java.net.CookieHandler
+import java.net.CookieManager
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val cookieManager = CookieManager()
+        CookieHandler.setDefault(cookieManager)
+
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
-
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        }
 
         val toggle = ActionBarDrawerToggle(
             this, drawer_layout, toolbar,
@@ -44,29 +36,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
+        supportFragmentManager.beginTransaction().replace(R.id.main_fragment_container, PostsFragment())
+            .commit()
+        nav_view.setCheckedItem(R.id.nav_posts)
+
+
         nav_view.setNavigationItemSelectedListener(this)
-
-        val postsLoadObservable =
-            PostsLoader.getPostsLoaderObservable("$URL/posts/")
-
-        val postsLoadObserver = postsLoadObservable.subscribe({
-            val listType = object : TypeToken<ArrayList<Post>>() {}.type
-            val data: ArrayList<Post> = Gson().fromJson(it, listType)
-            Log.d("Parsed json:", data.toString())
-            Posts.addFromList(data)
-
-            val postsAdapter = PostsAdapter(
-                this,
-                R.layout.posts_adapter,
-                Posts.posts
-            )
-            postsList.adapter = postsAdapter
-
-        }, {
-            Log.e(TAG, "Network error: $it")
-            Snackbar.make(fab, "No internet connection", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        })
     }
 
     override fun onBackPressed() {
@@ -96,17 +71,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         when (item.itemId) {
-            R.id.nav_camera -> {
-                // Handle the camera action
+            R.id.nav_posts -> {
+                supportFragmentManager.beginTransaction().replace(R.id.main_fragment_container, PostsFragment())
+                    .commit()
             }
-            R.id.nav_gallery -> {
-
+            R.id.nav_favourites -> {
+                supportFragmentManager.beginTransaction().replace(R.id.main_fragment_container, FavouritesFragment())
+                    .commit()
             }
-            R.id.nav_slideshow -> {
-
+            R.id.nav_account -> {
+                supportFragmentManager.beginTransaction().replace(R.id.main_fragment_container, AccountFragment())
+                    .commit()
             }
-            R.id.nav_manage -> {
-
+            R.id.nav_login -> {
+                supportFragmentManager.beginTransaction().replace(R.id.main_fragment_container, LoginFragment())
+                    .commit()
             }
             R.id.nav_share -> {
 
