@@ -1,5 +1,6 @@
 package com.galeradev.galeradevblog.fragments
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -31,7 +32,13 @@ class AccountFragment : Fragment() {
                 val listType = object : TypeToken<User>() {}.type
                 val user: User = Gson().fromJson(it, listType)
                 tv_username.text = "Hi, ${user.username}!"
-
+                if (user.verified) {
+                    tv_email.setTextColor(Color.parseColor("#2bf27f"))
+                    tv_email.text = "Your email, ${user.email}, is verified!"
+                } else {
+                    tv_email.setTextColor(Color.parseColor("#f22746"))
+                    tv_email.text = "Your email, ${user.email}, is not verified!"
+                }
 
             }, {
                 if (it.networkResponse.data != null) {
