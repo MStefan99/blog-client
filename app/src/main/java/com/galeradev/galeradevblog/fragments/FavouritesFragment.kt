@@ -1,10 +1,10 @@
 package com.galeradev.galeradevblog.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.android.volley.Request
 import com.android.volley.Response
@@ -18,8 +18,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.fragment_posts.*
 
-
-private const val TAG = "PostsFragment"
+private const val TAG = "FavouritesFragment"
 private const val API_VERSION = "v0.1"
 private const val ROUTE = "favourites"
 private const val API_URL = "https://blog.mstefan99.com/api/$API_VERSION/$ROUTE/"
@@ -29,7 +28,7 @@ class FavouritesFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
 
-        val queue = Volley.newRequestQueue(activity!!.applicationContext)
+        val queue = Volley.newRequestQueue(activity)
 
         val stringRequest = StringRequest(
             Request.Method.GET, API_URL,
@@ -46,7 +45,13 @@ class FavouritesFragment : Fragment() {
                 )
                 posts_list.adapter = postsAdapter
             },
-            Response.ErrorListener { Log.e(TAG, "Error: $it") })
+            Response.ErrorListener {
+                Toast.makeText(
+                    activity,
+                    "Network error ${it.networkResponse.statusCode}",
+                    Toast.LENGTH_LONG
+                ).show()
+            })
 
         queue.add(stringRequest)
         return inflater.inflate(R.layout.fragment_posts, container, false)

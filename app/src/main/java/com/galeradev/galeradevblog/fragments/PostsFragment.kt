@@ -1,10 +1,10 @@
 package com.galeradev.galeradevblog.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.android.volley.Request
 import com.android.volley.Response
@@ -28,7 +28,7 @@ class PostsFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
 
-        val queue = Volley.newRequestQueue(activity!!.applicationContext)
+        val queue = Volley.newRequestQueue(activity)
 
         val stringRequest = StringRequest(
             Request.Method.GET, API_URL,
@@ -45,7 +45,13 @@ class PostsFragment : Fragment() {
                 )
                 posts_list.adapter = postsAdapter
             },
-            Response.ErrorListener { Log.e(TAG, "Error: $it") })
+            Response.ErrorListener {
+                Toast.makeText(
+                    activity,
+                    "Network error ${it.networkResponse.statusCode}",
+                    Toast.LENGTH_LONG
+                ).show()
+            })
 
         queue.add(stringRequest)
         return inflater.inflate(R.layout.fragment_posts, container, false)

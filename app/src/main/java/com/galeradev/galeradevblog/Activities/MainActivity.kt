@@ -1,15 +1,16 @@
 package com.galeradev.galeradevblog.activities
 
 import android.os.Bundle
-import com.google.android.material.navigation.NavigationView
-import androidx.core.view.GravityCompat
-import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import com.galeradev.galeradevblog.*
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
+import com.galeradev.galeradevblog.R
 import com.galeradev.galeradevblog.fragments.FavouritesFragment
+import com.galeradev.galeradevblog.fragments.LoginFragment
 import com.galeradev.galeradevblog.fragments.PostsFragment
+import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import java.net.CookieHandler
@@ -19,8 +20,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val manager = CookieManager()
-        CookieHandler.setDefault(manager)
+
+        val cookieManager = CookieManager()
+        CookieHandler.setDefault(cookieManager)
+
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
@@ -71,7 +74,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     .commit()
             }
             R.id.nav_slideshow -> {
-
+                supportFragmentManager.beginTransaction().replace(R.id.main_fragment_container, LoginFragment())
+                    .commit()
             }
             R.id.nav_manage -> {
 
