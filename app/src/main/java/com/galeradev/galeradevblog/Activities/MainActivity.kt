@@ -1,29 +1,47 @@
 package com.galeradev.galeradevblog.activities
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import com.galeradev.galeradevblog.R
+import com.galeradev.galeradevblog.exceptions.NoSuchCookieException
 import com.galeradev.galeradevblog.fragments.AccountFragment
 import com.galeradev.galeradevblog.fragments.FavouritesFragment
 import com.galeradev.galeradevblog.fragments.LoginFragment
 import com.galeradev.galeradevblog.fragments.PostsFragment
+import com.galeradev.galeradevblog.utils.SharedPrefsUtil
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import java.net.CookieHandler
 import java.net.CookieManager
+import java.net.HttpCookie
+import java.net.URI
+
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+
+    private val cookieManager = CookieManager()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val cookieManager = CookieManager()
         CookieHandler.setDefault(cookieManager)
+        val sharedPrefsUtil = SharedPrefsUtil(this)
+
+        try {
+            val cookieValue = sharedPrefsUtil.loadCookie("MSTID")
+
+            val cookie = HttpCookie("MSTID", cookieValue)
+            cookieManager.cookieStore.add(URI("https://blog.mstefan99.com"), cookie)
+        } catch (e: NoSuchCookieException) {
+            Log.d("MainActivity", e.toString())
+        }
+
 
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
@@ -97,5 +115,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        val sharedPrefsUtil = SharedPrefsUtil(this)
+        val cookies = cookieManager.cookieStore.get(URI("https://blog.mstefan99.com"))
+        var value = ""
+        for (cookie in cookies) {
+            if (cookie.name == "MSTID") {
+                value = cookie.value
+                break
+            }
+        }
+        sharedPrefsUtil.saveCookie("MSTID", value)
     }
 }
