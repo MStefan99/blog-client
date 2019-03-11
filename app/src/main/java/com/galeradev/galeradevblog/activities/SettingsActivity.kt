@@ -1,6 +1,7 @@
 package com.galeradev.galeradevblog.activities
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.galeradev.galeradevblog.R
 import com.galeradev.galeradevblog.utils.CookieUtil
@@ -20,6 +21,7 @@ class SettingsActivity : AppCompatActivity() {
                     break
                 }
             }
+            Toast.makeText(this, "Success!", Toast.LENGTH_LONG).show()
         }
     }
 }
