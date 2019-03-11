@@ -23,6 +23,8 @@ import java.net.CookieHandler
 import java.net.HttpCookie
 import java.net.URI
 
+const val COOKIE_PATH = "https://blog.mstefan99.com"
+const val COOKIE_NAME = "MSTID"
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -33,11 +35,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val sharedPrefsUtil = SharedPrefsUtil(this)
 
         try {
-            val cookieValue = sharedPrefsUtil.loadCookie("MSTID")
+            val cookieValue = sharedPrefsUtil.loadCookie(COOKIE_NAME)
 
-            val cookie = HttpCookie("MSTID", cookieValue)
+            val cookie = HttpCookie(COOKIE_NAME, cookieValue)
             if (cookie.value != "") {
-                CookieUtil.cookieManager.cookieStore.add(URI("https://blog.mstefan99.com"), cookie)
+                CookieUtil.cookieManager.cookieStore.add(URI(COOKIE_PATH), cookie)
             }
         } catch (e: NoSuchCookieException) {
             Log.d("MainActivity", e.toString())
@@ -123,14 +125,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onPause() {
         super.onPause()
         val sharedPrefsUtil = SharedPrefsUtil(this)
-        val cookies = CookieUtil.cookieManager.cookieStore.get(URI("https://blog.mstefan99.com"))
+        val cookies = CookieUtil.cookieManager.cookieStore.get(URI(COOKIE_PATH))
         var value = ""
         for (cookie in cookies) {
-            if (cookie.name == "MSTID" && cookie.value != "") {
+            if (cookie.name == COOKIE_NAME && cookie.value != "") {
                 value = cookie.value
                 break
             }
         }
-        sharedPrefsUtil.saveCookie("MSTID", value)
+        sharedPrefsUtil.saveCookie(COOKIE_NAME, value)
     }
 }

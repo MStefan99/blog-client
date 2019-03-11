@@ -14,10 +14,10 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_settings)
 
         logout_button.setOnClickListener {
-            val cookies = CookieUtil.cookieManager.cookieStore.get(URI("https://blog.mstefan99.com"))
+            val cookies = CookieUtil.cookieManager.cookieStore.get(URI(COOKIE_PATH))
             for (cookie in cookies) {
-                if (cookie.name == "MSTID") {
-                    CookieUtil.cookieManager.cookieStore.remove(URI("https://blog.mstefan99.com"), cookie)
+                if (cookie.name == COOKIE_NAME) {
+                    CookieUtil.cookieManager.cookieStore.remove(URI(COOKIE_PATH), cookie)
                     break
                 }
             }
