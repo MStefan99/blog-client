@@ -1,5 +1,6 @@
 package com.galeradev.galeradevblog.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -13,6 +14,7 @@ import com.galeradev.galeradevblog.fragments.AccountFragment
 import com.galeradev.galeradevblog.fragments.FavouritesFragment
 import com.galeradev.galeradevblog.fragments.LoginFragment
 import com.galeradev.galeradevblog.fragments.PostsFragment
+import com.galeradev.galeradevblog.utils.CookieUtil
 import com.galeradev.galeradevblog.utils.SharedPrefsUtil
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_main.*
@@ -25,23 +27,20 @@ import java.net.URI
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    private val cookieManager = CookieManager()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        CookieHandler.setDefault(cookieManager)
+        CookieHandler.setDefault(CookieUtil.cookieManager)
         val sharedPrefsUtil = SharedPrefsUtil(this)
 
         try {
             val cookieValue = sharedPrefsUtil.loadCookie("MSTID")
 
             val cookie = HttpCookie("MSTID", cookieValue)
-            cookieManager.cookieStore.add(URI("https://blog.mstefan99.com"), cookie)
+            CookieUtil.cookieManager.cookieStore.add(URI("https://blog.mstefan99.com"), cookie)
         } catch (e: NoSuchCookieException) {
             Log.d("MainActivity", e.toString())
         }
-
 
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
@@ -81,9 +80,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         when (item.itemId) {
-            R.id.action_settings -> return true
-            else -> return super.onOptionsItemSelected(item)
+            R.id.action_settings -> {
+                val i = Intent(this, SettingsActivity::class.java)
+                startActivity(i)
+            }
         }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -120,7 +122,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onDestroy() {
         super.onDestroy()
         val sharedPrefsUtil = SharedPrefsUtil(this)
-        val cookies = cookieManager.cookieStore.get(URI("https://blog.mstefan99.com"))
+        val cookies = CookieUtil.cookieManager.cookieStore.get(URI("https://blog.mstefan99.com"))
         var value = ""
         for (cookie in cookies) {
             if (cookie.name == "MSTID") {

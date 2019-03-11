@@ -9,7 +9,9 @@ import androidx.fragment.app.Fragment
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.galeradev.galeradevblog.R
+import com.galeradev.galeradevblog.utils.CookieUtil
 import kotlinx.android.synthetic.main.fragment_login.*
+import java.net.URI
 
 
 private const val TAG = "LoginFragment"
