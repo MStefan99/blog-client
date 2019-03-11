@@ -16,7 +16,7 @@ class SharedPrefsUtil (activity: Activity) {
 
     fun saveCookie(cookieName: String, cookieValue: String) {
         preferencesEditor.putString(cookieName, cookieValue)
-        preferencesEditor.commit()
+        preferencesEditor.apply()
     }
 
     fun loadCookie(cookieName: String): String {

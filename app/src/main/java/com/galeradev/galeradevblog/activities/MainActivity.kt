@@ -20,7 +20,6 @@ import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import java.net.CookieHandler
-import java.net.CookieManager
 import java.net.HttpCookie
 import java.net.URI
 
@@ -37,7 +36,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             val cookieValue = sharedPrefsUtil.loadCookie("MSTID")
 
             val cookie = HttpCookie("MSTID", cookieValue)
-            CookieUtil.cookieManager.cookieStore.add(URI("https://blog.mstefan99.com"), cookie)
+            if (cookie.value != "") {
+                CookieUtil.cookieManager.cookieStore.add(URI("https://blog.mstefan99.com"), cookie)
+            }
         } catch (e: NoSuchCookieException) {
             Log.d("MainActivity", e.toString())
         }
@@ -119,13 +120,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onPause() {
+        super.onPause()
         val sharedPrefsUtil = SharedPrefsUtil(this)
         val cookies = CookieUtil.cookieManager.cookieStore.get(URI("https://blog.mstefan99.com"))
         var value = ""
         for (cookie in cookies) {
-            if (cookie.name == "MSTID") {
+            if (cookie.name == "MSTID" && cookie.value != "") {
                 value = cookie.value
                 break
             }
