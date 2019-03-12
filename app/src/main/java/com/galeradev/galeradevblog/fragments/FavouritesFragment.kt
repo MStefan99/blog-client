@@ -25,6 +25,19 @@ class FavouritesFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
+        getPosts()
+        return inflater.inflate(R.layout.fragment_posts, container, false)
+
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        swipe_refresh.setOnRefreshListener {
+            getPosts()
+        }
+    }
+
+    private fun getPosts() {
         val queue = Volley.newRequestQueue(activity)
 
         val favouritesRequest = object : StringRequest(
@@ -38,23 +51,25 @@ class FavouritesFragment : Fragment() {
                     posts
                 )
                 posts_list.adapter = postsAdapter
-            }, {
-                if (it.networkResponse.data != null) {
+                swipe_refresh.isRefreshing = false
+            }, { error ->
+                error.networkResponse?.let {
                     Toast.makeText(
                         activity,
-                        "Network error ${it.networkResponse.statusCode} ${kotlin.text.String(it.networkResponse.data)}",
+                        "Network error ${error.networkResponse.statusCode} ${kotlin.text.String(error.networkResponse.data)}",
                         Toast.LENGTH_LONG
                     ).show()
-                } else {
+                } ?: run {
                     Toast.makeText(
                         activity,
-                        "Network error ${it.networkResponse.statusCode}",
+                        "Network error",
                         Toast.LENGTH_LONG
                     ).show()
                 }
+                swipe_refresh.isRefreshing = false
             }) {}
 
         queue.add(favouritesRequest)
-        return inflater.inflate(R.layout.fragment_posts, container, false)
+
     }
 }
