@@ -6,21 +6,23 @@ import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.DefaultRetryPolicy
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
-import com.galeradev.galeradevblog.App.Companion.API_URL
+import com.galeradev.galeradevblog.App
 import com.galeradev.galeradevblog.R
-import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.android.synthetic.main.activity_delete.*
 
-class LoginActivity : AppCompatActivity() {
-
+class DeleteActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+        setContentView(R.layout.activity_delete)
 
-        login_button.setOnClickListener {
+        reject_button.setOnClickListener {
+            onBackPressed()
+        }
+
+        confirm_button.setOnClickListener {
             val queue = Volley.newRequestQueue(this)
-
-            val loginRequest = object : StringRequest(
-                Method.POST, "$API_URL/login/", {
+            val registerRequest = object : StringRequest(
+                Method.PUT, "${App.API_URL}/delete/", {
                     Toast.makeText(
                         this,
                         it,
@@ -42,20 +44,14 @@ class LoginActivity : AppCompatActivity() {
                         ).show()
                     }
                 }
-            ) {
-                override fun getParams(): Map<String, String> {
-                    val params = HashMap<String, String>()
-                    params["login"] = login_field.text.toString()
-                    params["current-password"] = password_field.text.toString()
-                    return params
-                }
-            }
-            loginRequest.retryPolicy = DefaultRetryPolicy(
+            ) {}
+            registerRequest.retryPolicy = DefaultRetryPolicy(
                 0,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
             )
-            queue.add(loginRequest)
+            queue.add(registerRequest)
+            onBackPressed()
         }
     }
 }

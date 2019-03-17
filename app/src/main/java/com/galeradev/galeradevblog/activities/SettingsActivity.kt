@@ -3,6 +3,7 @@ package com.galeradev.galeradevblog.activities
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.galeradev.galeradevblog.App.Companion.COOKIE_NAME
 import com.galeradev.galeradevblog.App.Companion.COOKIE_PATH
@@ -27,9 +28,7 @@ class SettingsActivity : AppCompatActivity() {
                     break
                 }
             }
-            login_button.visibility = View.VISIBLE
-            register_button.visibility = View.VISIBLE
-            logout_button.visibility = View.GONE
+            setButtonVisibility("IRdo")
         }
 
         login_button.setOnClickListener {
@@ -43,20 +42,41 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        delete_button.setOnClickListener {
+            intent = Intent(this, DeleteActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 
     override fun onResume() {
         super.onResume()
 
         if (CookieUtil.isLoggedIn()) {
-            login_button.visibility = View.GONE
-            register_button.visibility = View.GONE
-            logout_button.visibility = View.VISIBLE
+            setButtonVisibility("irDO")
         } else {
-            login_button.visibility = View.VISIBLE
-            register_button.visibility = View.VISIBLE
-            logout_button.visibility = View.GONE
+            setButtonVisibility("IRdo")
+        }
+    }
 
+    private fun setButtonVisibility(buttons: String) {
+        buttons.forEach { button ->
+            getButton(button)?.visibility = if (button.isUpperCase()) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
+        }
+    }
+
+    private fun getButton(button: Char): Button? {
+        return when (button) {
+            'I', 'i' -> login_button
+            'R', 'r' -> register_button
+
+            'D', 'd' -> delete_button
+            'O', 'o' -> logout_button
+            else -> null
         }
     }
 }
