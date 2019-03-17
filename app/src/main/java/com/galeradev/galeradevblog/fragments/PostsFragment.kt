@@ -10,11 +10,14 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.galeradev.galeradevblog.App.Companion.API_URL
 import com.galeradev.galeradevblog.R
+import com.galeradev.galeradevblog.activities.MainActivity
 import com.galeradev.galeradevblog.adapters.PostsAdapter
 import com.galeradev.galeradevblog.storage.Post
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.fragment_posts.*
+
+
 
 class PostsFragment : Fragment() {
 
@@ -29,6 +32,15 @@ class PostsFragment : Fragment() {
         swipe_refresh.setOnRefreshListener {
             getPosts()
         }
+
+        posts_list.setOnItemClickListener { parent, view, position, id ->
+            val act = activity as MainActivity
+            act.sendData(position.toString())
+        }
+    }
+
+    interface SendPostID {
+        fun sendData(message: String)
     }
 
     private fun getPosts() {

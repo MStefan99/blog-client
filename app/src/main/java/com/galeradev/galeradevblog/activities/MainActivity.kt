@@ -14,6 +14,7 @@ import com.galeradev.galeradevblog.R
 import com.galeradev.galeradevblog.exceptions.NoSuchCookieException
 import com.galeradev.galeradevblog.fragments.AccountFragment
 import com.galeradev.galeradevblog.fragments.FavouritesFragment
+import com.galeradev.galeradevblog.fragments.PostFragment
 import com.galeradev.galeradevblog.fragments.PostsFragment
 import com.galeradev.galeradevblog.utils.CookieUtil
 import com.galeradev.galeradevblog.utils.SharedPrefsUtil
@@ -24,7 +25,8 @@ import java.net.CookieHandler
 import java.net.HttpCookie
 import java.net.URI
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, PostsFragment.SendPostID {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -130,5 +132,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
 
+    }
+
+    override fun sendData(message: String) {
+        val postFragment = PostFragment()
+        postFragment.data = message
+        supportFragmentManager.beginTransaction().replace(R.id.main_fragment_container, postFragment)
+            .addToBackStack("post")
+            .commit()
     }
 }
