@@ -12,7 +12,6 @@ import com.galeradev.galeradevblog.R
 import com.galeradev.galeradevblog.exceptions.NoSuchCookieException
 import com.galeradev.galeradevblog.fragments.AccountFragment
 import com.galeradev.galeradevblog.fragments.FavouritesFragment
-import com.galeradev.galeradevblog.fragments.LoginFragment
 import com.galeradev.galeradevblog.fragments.PostsFragment
 import com.galeradev.galeradevblog.utils.CookieUtil
 import com.galeradev.galeradevblog.utils.SharedPrefsUtil
@@ -107,8 +106,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     .commit()
             }
             R.id.nav_login -> {
-                supportFragmentManager.beginTransaction().replace(R.id.main_fragment_container, LoginFragment())
-                    .commit()
+
             }
             R.id.nav_share -> {
 
@@ -126,13 +124,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onPause()
         val sharedPrefsUtil = SharedPrefsUtil(this)
         val cookies = CookieUtil.cookieManager.cookieStore.get(URI(COOKIE_PATH))
-        var value = ""
         for (cookie in cookies) {
             if (cookie.name == COOKIE_NAME && cookie.value != "") {
-                value = cookie.value
-                break
+                val value = cookie.value
+                sharedPrefsUtil.saveCookie(COOKIE_NAME, value)
             }
         }
-        sharedPrefsUtil.saveCookie(COOKIE_NAME, value)
+
     }
 }
