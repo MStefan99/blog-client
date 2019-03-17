@@ -8,6 +8,8 @@ import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import com.galeradev.galeradevblog.App.Companion.COOKIE_NAME
+import com.galeradev.galeradevblog.App.Companion.COOKIE_PATH
 import com.galeradev.galeradevblog.R
 import com.galeradev.galeradevblog.exceptions.NoSuchCookieException
 import com.galeradev.galeradevblog.fragments.AccountFragment
@@ -21,9 +23,6 @@ import kotlinx.android.synthetic.main.app_bar_main.*
 import java.net.CookieHandler
 import java.net.HttpCookie
 import java.net.URI
-
-const val COOKIE_PATH = "https://blog.mstefan99.com"
-const val COOKIE_NAME = "MSTID"
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 

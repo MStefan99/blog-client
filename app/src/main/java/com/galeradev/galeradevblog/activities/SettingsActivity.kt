@@ -4,8 +4,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.galeradev.galeradevblog.App.Companion.COOKIE_NAME
+import com.galeradev.galeradevblog.App.Companion.COOKIE_PATH
 import com.galeradev.galeradevblog.R
 import com.galeradev.galeradevblog.utils.CookieUtil
+import com.galeradev.galeradevblog.utils.SharedPrefsUtil
 import kotlinx.android.synthetic.main.activity_settings.*
 import java.net.URI
 
@@ -20,6 +23,7 @@ class SettingsActivity : AppCompatActivity() {
             for (cookie in cookies) {
                 if (cookie.name == COOKIE_NAME) {
                     CookieUtil.cookieManager.cookieStore.remove(URI(COOKIE_PATH), cookie)
+                    SharedPrefsUtil(this).removeCookie(COOKIE_NAME)
                     break
                 }
             }
@@ -44,7 +48,7 @@ class SettingsActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        if (CookieUtil.logged_in()) {
+        if (CookieUtil.isLoggedIn()) {
             login_button.visibility = View.GONE
             register_button.visibility = View.GONE
             logout_button.visibility = View.VISIBLE

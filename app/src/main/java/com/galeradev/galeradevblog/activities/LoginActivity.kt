@@ -5,13 +5,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.galeradev.galeradevblog.App.Companion.API_URL
 import com.galeradev.galeradevblog.R
 import kotlinx.android.synthetic.main.activity_login.*
-
-private const val TAG = "LoginActivity"
-private const val API_VERSION = "v0.1"
-private const val ROUTE = "login"
-private const val API_URL = "https://blog.mstefan99.com/api/$API_VERSION/$ROUTE/"
 
 class LoginActivity : AppCompatActivity() {
 
@@ -23,7 +19,7 @@ class LoginActivity : AppCompatActivity() {
             val queue = Volley.newRequestQueue(this)
 
             val loginRequest = object : StringRequest(
-                Method.POST, API_URL, {
+                Method.POST, "$API_URL/login/", {
                     Toast.makeText(
                         this,
                         it,
