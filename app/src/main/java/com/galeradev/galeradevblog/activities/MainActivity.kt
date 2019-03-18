@@ -16,6 +16,7 @@ import com.galeradev.galeradevblog.fragments.AccountFragment
 import com.galeradev.galeradevblog.fragments.FavouritesFragment
 import com.galeradev.galeradevblog.fragments.PostFragment
 import com.galeradev.galeradevblog.fragments.PostsFragment
+import com.galeradev.galeradevblog.storage.Post
 import com.galeradev.galeradevblog.utils.CookieUtil
 import com.galeradev.galeradevblog.utils.SharedPrefsUtil
 import com.google.android.material.navigation.NavigationView
@@ -26,7 +27,7 @@ import java.net.HttpCookie
 import java.net.URI
 
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, PostsFragment.SendPostID {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -134,9 +135,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     }
 
-    override fun sendData(message: String) {
+    fun sendData(post: Post) {
         val postFragment = PostFragment()
-        postFragment.data = message
+        postFragment.data = post.title
         supportFragmentManager.beginTransaction().replace(R.id.main_fragment_container, postFragment)
             .addToBackStack("post")
             .commit()

@@ -18,32 +18,36 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.fragment_posts.*
 
 
-
 class PostsFragment : Fragment() {
+
+    private lateinit var posts: ArrayList<Post>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
-        getPosts()
+        getPosts{
+            setPosts(it)
+            posts = it
+        }
         return inflater.inflate(R.layout.fragment_posts, container, false)
     }
 
     override fun onResume() {
         super.onResume()
         swipe_refresh.setOnRefreshListener {
-            getPosts()
+            getPosts{
+                setPosts(it)
+                posts = it
+            }
         }
 
-        posts_list.setOnItemClickListener { parent, view, position, id ->
+        posts_list.setOnItemClickListener { _, _, position, _ ->
             val act = activity as MainActivity
-            act.sendData(position.toString())
+
+            act.sendData(posts[position])
         }
     }
 
-    interface SendPostID {
-        fun sendData(message: String)
-    }
-
-    private fun getPosts() {
+    private fun getPosts(callback: (ArrayList<Post>) -> Unit) {
         val queue = Volley.newRequestQueue(activity)
 
         val postsRequest = object : StringRequest(
@@ -51,12 +55,7 @@ class PostsFragment : Fragment() {
                 val listType = object : TypeToken<ArrayList<Post>>() {}.type
                 val posts: ArrayList<Post> = Gson().fromJson(it, listType)
 
-                val postsAdapter = PostsAdapter(
-                    activity!!.applicationContext,
-                    R.layout.posts_adapter,
-                    posts
-                )
-                posts_list.adapter = postsAdapter
+                callback(posts)
                 swipe_refresh.isRefreshing = false
             }, { error ->
                 error.networkResponse?.let {
@@ -77,5 +76,14 @@ class PostsFragment : Fragment() {
 
         queue.add(postsRequest)
 
+    }
+
+    private fun setPosts(posts: ArrayList<Post>) {
+        val postsAdapter = PostsAdapter(
+            activity!!.applicationContext,
+            R.layout.posts_adapter,
+            posts
+        )
+        posts_list.adapter = postsAdapter
     }
 }
