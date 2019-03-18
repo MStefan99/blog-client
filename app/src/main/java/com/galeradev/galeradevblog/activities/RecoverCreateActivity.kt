@@ -1,27 +1,26 @@
 package com.galeradev.galeradevblog.activities
 
-import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.DefaultRetryPolicy
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
-import com.galeradev.galeradevblog.App.Companion.API_URL
+import com.galeradev.galeradevblog.App
 import com.galeradev.galeradevblog.R
-import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.android.synthetic.main.activity_create_recover.*
 
-class LoginActivity : AppCompatActivity() {
+class RecoverCreateActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+        setContentView(R.layout.activity_create_recover)
 
-        login_button.setOnClickListener {
+        reset_button.setOnClickListener {
             val queue = Volley.newRequestQueue(this)
 
-            val loginRequest = object : StringRequest(
-                Method.POST, "$API_URL/login/", {
+            val recoverRequest = object : StringRequest(
+                Method.POST, "${App.API_URL}/recover_create/", {
                     Toast.makeText(
                         this,
                         it,
@@ -47,21 +46,16 @@ class LoginActivity : AppCompatActivity() {
                 override fun getParams(): Map<String, String> {
                     val params = HashMap<String, String>()
                     params["login"] = login_input.text.toString()
-                    params["current-password"] = password_input.text.toString()
                     return params
                 }
             }
-            loginRequest.retryPolicy = DefaultRetryPolicy(
+
+            recoverRequest.retryPolicy = DefaultRetryPolicy(
                 0,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
             )
-            queue.add(loginRequest)
-        }
-
-        recover_button.setOnClickListener {
-            val intent = Intent(this, RecoverCreateActivity::class.java)
-            startActivity(intent)
+            queue.add(recoverRequest)
         }
     }
 }
