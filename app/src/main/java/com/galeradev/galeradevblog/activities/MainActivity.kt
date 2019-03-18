@@ -1,5 +1,6 @@
 package com.galeradev.galeradevblog.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -7,41 +8,43 @@ import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import com.galeradev.galeradevblog.App.Companion.COOKIE_NAME
+import com.galeradev.galeradevblog.App.Companion.COOKIE_PATH
 import com.galeradev.galeradevblog.R
 import com.galeradev.galeradevblog.exceptions.NoSuchCookieException
 import com.galeradev.galeradevblog.fragments.AccountFragment
 import com.galeradev.galeradevblog.fragments.FavouritesFragment
-import com.galeradev.galeradevblog.fragments.LoginFragment
+import com.galeradev.galeradevblog.fragments.PostFragment
 import com.galeradev.galeradevblog.fragments.PostsFragment
+import com.galeradev.galeradevblog.storage.Post
+import com.galeradev.galeradevblog.utils.CookieUtil
 import com.galeradev.galeradevblog.utils.SharedPrefsUtil
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import java.net.CookieHandler
-import java.net.CookieManager
 import java.net.HttpCookie
 import java.net.URI
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    private val cookieManager = CookieManager()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        CookieHandler.setDefault(cookieManager)
+        CookieHandler.setDefault(CookieUtil.cookieManager)
         val sharedPrefsUtil = SharedPrefsUtil(this)
 
         try {
-            val cookieValue = sharedPrefsUtil.loadCookie("MSTID")
+            val cookieValue = sharedPrefsUtil.loadCookie(COOKIE_NAME)
 
-            val cookie = HttpCookie("MSTID", cookieValue)
-            cookieManager.cookieStore.add(URI("https://blog.mstefan99.com"), cookie)
+            val cookie = HttpCookie(COOKIE_NAME, cookieValue)
+            if (cookie.value != "") {
+                CookieUtil.cookieManager.cookieStore.add(URI(COOKIE_PATH), cookie)
+            }
         } catch (e: NoSuchCookieException) {
             Log.d("MainActivity", e.toString())
         }
-
 
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
@@ -81,9 +84,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         when (item.itemId) {
-            R.id.action_settings -> return true
-            else -> return super.onOptionsItemSelected(item)
+            R.id.action_settings -> {
+                val i = Intent(this, SettingsActivity::class.java)
+                startActivity(i)
+            }
         }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -102,8 +108,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     .commit()
             }
             R.id.nav_login -> {
-                supportFragmentManager.beginTransaction().replace(R.id.main_fragment_container, LoginFragment())
-                    .commit()
+
             }
             R.id.nav_share -> {
 
@@ -117,17 +122,24 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onPause() {
+        super.onPause()
         val sharedPrefsUtil = SharedPrefsUtil(this)
-        val cookies = cookieManager.cookieStore.get(URI("https://blog.mstefan99.com"))
-        var value = ""
+        val cookies = CookieUtil.cookieManager.cookieStore.get(URI(COOKIE_PATH))
         for (cookie in cookies) {
-            if (cookie.name == "MSTID") {
-                value = cookie.value
-                break
+            if (cookie.name == COOKIE_NAME && cookie.value != "") {
+                val value = cookie.value
+                sharedPrefsUtil.saveCookie(COOKIE_NAME, value)
             }
         }
-        sharedPrefsUtil.saveCookie("MSTID", value)
+
+    }
+
+    fun sendData(post: Post) {
+        val postFragment = PostFragment()
+        postFragment.post = post
+        supportFragmentManager.beginTransaction().replace(R.id.main_fragment_container, postFragment)
+            .addToBackStack("post")
+            .commit()
     }
 }

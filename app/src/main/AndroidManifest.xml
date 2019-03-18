@@ -24,6 +24,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".activities.SettingsActivity" />
+        <activity android:name=".activities.LoginActivity" />
+        <activity android:name=".activities.RegisterActivity" />
+        <activity android:name=".activities.DeleteActivity" />
+        <activity android:name=".activities.RecoverCreateActivity" />
+        <activity android:name=".activities.RecoverActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https"
+                    android:host="blog.mstefan99.com"
+                    android:pathPrefix="/recover/" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

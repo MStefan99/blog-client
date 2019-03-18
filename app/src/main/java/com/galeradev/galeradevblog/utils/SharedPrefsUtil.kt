@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.SharedPreferences
 import com.galeradev.galeradevblog.exceptions.NoSuchCookieException
 
-class SharedPrefsUtil (activity: Activity) {
+class SharedPrefsUtil(activity: Activity) {
 
     private val preferences: SharedPreferences
     private val preferencesEditor: SharedPreferences.Editor
@@ -16,16 +16,20 @@ class SharedPrefsUtil (activity: Activity) {
 
     fun saveCookie(cookieName: String, cookieValue: String) {
         preferencesEditor.putString(cookieName, cookieValue)
-        preferencesEditor.commit()
+        preferencesEditor.apply()
     }
 
     fun loadCookie(cookieName: String): String {
-        preferences.getString(cookieName, "")?.let{
+        preferences.getString(cookieName, "")?.let {
             return it
         }
         throw NoSuchCookieException("No cookie with name $cookieName saved")
     }
 
+    fun removeCookie(cookieName: String) {
+        preferencesEditor.putString(cookieName, "")
+        preferencesEditor.apply()
+    }
 
     companion object {
         private const val PREF = "Preferences"

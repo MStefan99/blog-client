@@ -2,7 +2,6 @@ package com.galeradev.galeradevblog.fragments
 
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,25 +10,26 @@ import androidx.fragment.app.Fragment
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.galeradev.galeradevblog.App.Companion.API_URL
 import com.galeradev.galeradevblog.R
 import com.galeradev.galeradevblog.storage.User
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.fragment_account.*
 
-private const val TAG = "AccountFragment"
-private const val API_VERSION = "v0.1"
-private const val ROUTE = "account"
-private const val API_URL = "https://blog.mstefan99.com/api/$API_VERSION/$ROUTE/"
-
 class AccountFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
+        return inflater.inflate(R.layout.fragment_account, container, false)
+    }
+
+    override fun onResume() {
+        super.onResume()
         val queue = Volley.newRequestQueue(activity)
 
         val favouritesRequest = object : StringRequest(
-            Request.Method.GET, API_URL, {
+            Request.Method.GET, "$API_URL/account/", {
                 val listType = object : TypeToken<User>() {}.type
                 val user: User = Gson().fromJson(it, listType)
                 tv_username.text = "Hi, ${user.username}!"
@@ -42,6 +42,7 @@ class AccountFragment : Fragment() {
                 }
 
             }, {
+                tv_username.text = "Not logged in"
                 if (it.networkResponse.data != null) {
                     Toast.makeText(
                         activity,
@@ -58,6 +59,5 @@ class AccountFragment : Fragment() {
             }) {}
 
         queue.add(favouritesRequest)
-        return inflater.inflate(R.layout.fragment_account, container, false)
     }
 }

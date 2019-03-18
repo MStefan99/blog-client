@@ -1,52 +1,43 @@
-package com.galeradev.galeradevblog.fragments
+package com.galeradev.galeradevblog.activities
 
+import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.Fragment
+import androidx.appcompat.app.AppCompatActivity
+import com.android.volley.DefaultRetryPolicy
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.galeradev.galeradevblog.App.Companion.API_URL
 import com.galeradev.galeradevblog.R
-import kotlinx.android.synthetic.main.fragment_login.*
+import kotlinx.android.synthetic.main.activity_login.*
 
+class LoginActivity : AppCompatActivity() {
 
-private const val TAG = "LoginFragment"
-private const val API_VERSION = "v0.1"
-private const val ROUTE = "login"
-private const val API_URL = "https://blog.mstefan99.com/api/$API_VERSION/$ROUTE/"
-
-class LoginFragment : Fragment() {
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        super.onCreateView(inflater, container, savedInstanceState)
-        return inflater.inflate(R.layout.fragment_login, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_login)
 
         login_button.setOnClickListener {
-            val queue = Volley.newRequestQueue(activity)
+            val queue = Volley.newRequestQueue(this)
 
             val loginRequest = object : StringRequest(
-                Method.POST, API_URL, {
+                Method.POST, "$API_URL/login/", {
                     Toast.makeText(
-                        activity,
+                        this,
                         it,
                         Toast.LENGTH_LONG
                     ).show()
+                    onBackPressed()
                 }, {
                     if (it.networkResponse.data != null) {
                         Toast.makeText(
-                            activity,
+                            this,
                             "Network error ${it.networkResponse.statusCode} ${kotlin.text.String(it.networkResponse.data)}",
                             Toast.LENGTH_LONG
                         ).show()
                     } else {
                         Toast.makeText(
-                            activity,
+                            this,
                             "Network error ${it.networkResponse.statusCode}",
                             Toast.LENGTH_LONG
                         ).show()
@@ -55,12 +46,22 @@ class LoginFragment : Fragment() {
             ) {
                 override fun getParams(): Map<String, String> {
                     val params = HashMap<String, String>()
-                    params["login"] = login_field.text.toString()
-                    params["current-password"] = password_field.text.toString()
+                    params["login"] = login_input.text.toString()
+                    params["current-password"] = password_input.text.toString()
                     return params
                 }
             }
+            loginRequest.retryPolicy = DefaultRetryPolicy(
+                0,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+            )
             queue.add(loginRequest)
+        }
+
+        recover_button.setOnClickListener {
+            val intent = Intent(this, RecoverCreateActivity::class.java)
+            startActivity(intent)
         }
     }
 }
