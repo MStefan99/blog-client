@@ -137,7 +137,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     fun sendData(post: Post) {
         val postFragment = PostFragment()
-        postFragment.data = post.title
+        postFragment.post = post
         supportFragmentManager.beginTransaction().replace(R.id.main_fragment_container, postFragment)
             .addToBackStack("post")
             .commit()

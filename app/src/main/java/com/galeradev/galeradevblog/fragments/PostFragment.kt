@@ -6,10 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.galeradev.galeradevblog.R
+import com.galeradev.galeradevblog.storage.Post
 import kotlinx.android.synthetic.main.fragment_post.*
 
 class PostFragment : Fragment() {
-    lateinit var data: String
+    lateinit var post: Post
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
@@ -18,6 +19,11 @@ class PostFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        textView9.text = data
+        post_title.text = post.title
+        post_tagline.text = post.tagline
+        post_date.text = post.date
+        post_author.text = post.author
+        post_content.text = post.content
+        post_tags.text = post.tags
     }
 }

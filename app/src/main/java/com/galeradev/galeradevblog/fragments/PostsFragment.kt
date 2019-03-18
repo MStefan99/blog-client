@@ -24,7 +24,7 @@ class PostsFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
-        getPosts{
+        getPosts {
             setPosts(it)
             posts = it
         }
@@ -34,7 +34,7 @@ class PostsFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         swipe_refresh.setOnRefreshListener {
-            getPosts{
+            getPosts {
                 setPosts(it)
                 posts = it
             }
@@ -42,10 +42,10 @@ class PostsFragment : Fragment() {
 
         posts_list.setOnItemClickListener { _, _, position, _ ->
             val act = activity as MainActivity
-
             act.sendData(posts[position])
         }
     }
+
 
     private fun getPosts(callback: (ArrayList<Post>) -> Unit) {
         val queue = Volley.newRequestQueue(activity)
