@@ -1,22 +1,24 @@
 package com.galeradev.galeradevblog.utils
 
-import android.app.Activity
+import android.content.Context
 import com.android.volley.DefaultRetryPolicy
+import com.android.volley.Request.Method.GET
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.galeradev.galeradevblog.App
 
 object NetworkUtil {
+
     fun makeRequest(
-        activity: Activity,
+        context: Context,
         method: Int,
         path: String,
         onResponse: (String) -> Unit,
-        onError: (VolleyError) -> Unit,
-        params: HashMap<String, String>?
+        onError: (VolleyError) -> Unit = {},
+        params: HashMap<String, String>? = null
     ) {
-        val queue = Volley.newRequestQueue(activity)
+        val queue = Volley.newRequestQueue(context)
 
         val request = object : StringRequest(
             method, "${App.API_URL}/$path/", {
@@ -43,8 +45,6 @@ object NetworkUtil {
             DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
             DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
         )
-
         queue.add(request)
     }
-
 }

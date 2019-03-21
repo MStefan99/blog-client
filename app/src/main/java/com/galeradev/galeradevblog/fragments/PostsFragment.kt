@@ -53,31 +53,31 @@ class PostsFragment : Fragment() {
             GET,
             "posts",
             {
+                swipe_refresh.isRefreshing = false
+
                 val listType = object : TypeToken<ArrayList<Post>>() {}.type
                 val posts: ArrayList<Post> = Gson().fromJson(it, listType)
 
                 callback(posts)
-                swipe_refresh.isRefreshing = false
             },
-            { error ->
-                error.networkResponse?.let {
+            {
+                swipe_refresh.isRefreshing = false
+
+                if (it.networkResponse.data != null) {
                     Toast.makeText(
                         activity,
-                        "Network error ${error.networkResponse.statusCode} ${kotlin.text.String(error.networkResponse.data)}",
+                        "Network error ${it.networkResponse.statusCode} ${kotlin.text.String(it.networkResponse.data)}",
                         Toast.LENGTH_LONG
                     ).show()
-                } ?: run {
+                } else {
                     Toast.makeText(
                         activity,
-                        "Network error",
+                        "Network error ${it.networkResponse.statusCode}",
                         Toast.LENGTH_LONG
                     ).show()
                 }
-                swipe_refresh.isRefreshing = false
-            },
-            null
+            }
         )
-
     }
 
     private fun setPosts(posts: ArrayList<Post>) {
