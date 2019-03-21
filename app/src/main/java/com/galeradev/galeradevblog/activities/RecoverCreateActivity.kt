@@ -3,11 +3,9 @@ package com.galeradev.galeradevblog.activities
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.android.volley.DefaultRetryPolicy
-import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.Volley
-import com.galeradev.galeradevblog.App
+import com.android.volley.Request.Method.POST
 import com.galeradev.galeradevblog.R
+import com.galeradev.galeradevblog.utils.NetworkUtil.makeRequest
 import kotlinx.android.synthetic.main.activity_create_recover.*
 
 class RecoverCreateActivity : AppCompatActivity() {
@@ -17,10 +15,14 @@ class RecoverCreateActivity : AppCompatActivity() {
         setContentView(R.layout.activity_create_recover)
 
         reset_button.setOnClickListener {
-            val queue = Volley.newRequestQueue(this)
+            val params = HashMap<String, String>()
+            params["login"] = login_input.text.toString()
 
-            val recoverRequest = object : StringRequest(
-                Method.POST, "${App.API_URL}/recover_create/", {
+            makeRequest(
+                this,
+                POST,
+                "recover_create",
+                {
                     Toast.makeText(
                         this,
                         it,
@@ -41,21 +43,9 @@ class RecoverCreateActivity : AppCompatActivity() {
                             Toast.LENGTH_LONG
                         ).show()
                     }
-                }
-            ) {
-                override fun getParams(): Map<String, String> {
-                    val params = HashMap<String, String>()
-                    params["login"] = login_input.text.toString()
-                    return params
-                }
-            }
-
-            recoverRequest.retryPolicy = DefaultRetryPolicy(
-                0,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+                },
+                params
             )
-            queue.add(recoverRequest)
         }
     }
 }

@@ -4,11 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.android.volley.DefaultRetryPolicy
-import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.Volley
-import com.galeradev.galeradevblog.App
+import com.android.volley.Request.Method.PUT
 import com.galeradev.galeradevblog.R
+import com.galeradev.galeradevblog.utils.NetworkUtil.makeRequest
 import kotlinx.android.synthetic.main.activity_recover.*
 
 class RecoverActivity : AppCompatActivity() {
@@ -28,10 +26,15 @@ class RecoverActivity : AppCompatActivity() {
             } else if (passwordsMismatch) {
                 Toast.makeText(this, "Passwords do not match", Toast.LENGTH_LONG).show()
             } else {
-                val queue = Volley.newRequestQueue(this)
+                val params = HashMap<String, String>()
+                params["key"] = key
+                params["new-password"] = password_input.text.toString()
 
-                val recoverRequest = object : StringRequest(
-                    Method.PUT, "${App.API_URL}/recover/", {
+                makeRequest(
+                    this,
+                    PUT,
+                    "recover",
+                    {
                         Toast.makeText(
                             this,
                             it,
@@ -53,26 +56,10 @@ class RecoverActivity : AppCompatActivity() {
                                 Toast.LENGTH_LONG
                             ).show()
                         }
-                    }
-                ) {
-                    override fun getParams(): Map<String, String> {
-                        val params = HashMap<String, String>()
-                        params["key"] = key
-                        params["new-password"] = password_input.text.toString()
-                        return params
-                    }
-                }
-
-                recoverRequest.retryPolicy = DefaultRetryPolicy(
-                    0,
-                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+                    },
+                    params
                 )
-                queue.add(recoverRequest)
             }
-
-
         }
     }
-
 }
