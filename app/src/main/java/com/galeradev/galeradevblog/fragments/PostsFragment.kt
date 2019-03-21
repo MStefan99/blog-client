@@ -1,18 +1,18 @@
 package com.galeradev.galeradevblog.fragments
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.Volley
-import com.galeradev.galeradevblog.App.Companion.API_URL
+import com.android.volley.Request.Method.GET
 import com.galeradev.galeradevblog.R
 import com.galeradev.galeradevblog.activities.MainActivity
 import com.galeradev.galeradevblog.adapters.PostsAdapter
 import com.galeradev.galeradevblog.storage.Post
+import com.galeradev.galeradevblog.utils.NetworkUtil.makeRequest
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.fragment_posts.*
@@ -48,16 +48,18 @@ class PostsFragment : Fragment() {
 
 
     private fun getPosts(callback: (ArrayList<Post>) -> Unit) {
-        val queue = Volley.newRequestQueue(activity)
-
-        val postsRequest = object : StringRequest(
-            Method.GET, "$API_URL/posts/", {
+        makeRequest(
+            activity as Activity,
+            GET,
+            "posts",
+            {
                 val listType = object : TypeToken<ArrayList<Post>>() {}.type
                 val posts: ArrayList<Post> = Gson().fromJson(it, listType)
 
                 callback(posts)
                 swipe_refresh.isRefreshing = false
-            }, { error ->
+            },
+            { error ->
                 error.networkResponse?.let {
                     Toast.makeText(
                         activity,
@@ -72,9 +74,9 @@ class PostsFragment : Fragment() {
                     ).show()
                 }
                 swipe_refresh.isRefreshing = false
-            }) {}
-
-        queue.add(postsRequest)
+            },
+            null
+        )
 
     }
 
