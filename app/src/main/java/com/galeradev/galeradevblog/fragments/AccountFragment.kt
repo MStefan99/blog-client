@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment
 import com.android.volley.Request.Method.GET
 import com.galeradev.galeradevblog.R
 import com.galeradev.galeradevblog.storage.User
-import com.galeradev.galeradevblog.utils.NetworkUtil
 import com.galeradev.galeradevblog.utils.NetworkUtil.makeRequest
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken

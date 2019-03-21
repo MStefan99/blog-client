@@ -7,15 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.android.volley.Request
 import com.android.volley.Request.Method.GET
-import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.Volley
-import com.galeradev.galeradevblog.App.Companion.API_URL
 import com.galeradev.galeradevblog.R
 import com.galeradev.galeradevblog.adapters.PostsAdapter
 import com.galeradev.galeradevblog.storage.Post
-import com.galeradev.galeradevblog.utils.NetworkUtil
 import com.galeradev.galeradevblog.utils.NetworkUtil.makeRequest
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
